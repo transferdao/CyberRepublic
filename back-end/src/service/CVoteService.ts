@@ -19,7 +19,7 @@ const restrictedFields = {
 
 export default class extends Base {
 
-  public async create(param): Promise<Document> {
+  public async create(param: any): Promise<Document> {
     const db_cvote = this.getDBModel('CVote')
     const db_user = this.getDBModel('User')
     const db_suggestion = this.getDBModel('Suggestion')
@@ -219,7 +219,7 @@ export default class extends Base {
    * @param query
    * @returns {Promise<"mongoose".Document>}
    */
-  public async list(param): Promise<Document> {
+  public async list(param: any): Promise<Document> {
 
     const db_cvote = this.getDBModel('CVote')
     const db_user = this.getDBModel('User')
@@ -267,7 +267,7 @@ export default class extends Base {
    * @param param
    * @returns {Promise<"mongoose".Document>}
    */
-  public async update(param): Promise<Document> {
+  public async update(param: any): Promise<Document> {
     const db_user = this.getDBModel('User')
     const db_cvote = this.getDBModel('CVote')
     const currentUserId = _.get(this.currentUser, '_id')
@@ -377,7 +377,7 @@ export default class extends Base {
     return supportNum > data.voteResult.length * 0.5
   }
 
-  public async vote(param): Promise<Document> {
+  public async vote(param: any): Promise<Document> {
     const db_cvote = this.getDBModel('CVote')
     const { _id, value, reason } = param
     const cur = await db_cvote.findOne({ _id })
@@ -409,7 +409,7 @@ export default class extends Base {
     return await this.getById(_id)
   }
 
-  public async updateNote(param): Promise<Document> {
+  public async updateNote(param: any): Promise<Document> {
     const db_cvote = this.getDBModel('CVote')
     const { _id, notes } = param
 
@@ -424,11 +424,66 @@ export default class extends Base {
       throw 'only secretary could update notes'
     }
 
-    const rs = await db_cvote.update({ _id }, {
+    await db_cvote.update({ _id }, {
       $set: {
         notes: notes || ''
       }
     })
+
+    return await this.getById(_id)
+  }
+
+  public async updateBidding(param: any): Promise<Document> {
+    const db_cvote = this.getDBModel('CVote')
+    const { _id, status, endDate, template } = param
+
+    const cur = await db_cvote.findOne({ _id })
+    if (!cur) {
+      throw 'invalid proposal id'
+    }
+
+    const updateObj: any = {}
+    if (status) updateObj['bidding.status'] = status
+    if (endDate) updateObj['bidding.endDate'] = endDate
+    if (template) updateObj['bidding.template'] = template
+
+    const rs = await db_cvote.update({ _id }, {
+      $set: {
+        ...updateObj,
+      }
+    })
+
+    return await this.getById(_id)
+  }
+
+  public async bid(param: any): Promise<Document> {
+    const db_cvote = this.getDBModel('CVote')
+    const userId = _.get(this.currentUser, '_id')
+    const { _id, file } = param
+
+    const cur = await db_cvote.findOne({ _id })
+    if (!cur) {
+      throw 'invalid proposal id'
+    }
+    const isFileExisted = await db_cvote.findOne({ _id, 'bidding.files.user': userId })
+
+    if (isFileExisted) {
+      await db_cvote.update({ _id, 'bidding.files.user': userId }, {
+        $set: {
+          // 'bidding.files.$.user': userId,
+          'bidding.files.$.file': file,
+        },
+      })
+    } else {
+      await db_cvote.update({ _id }, {
+        $push: {
+          'bidding.files': {
+            user: userId,
+            file,
+          }
+        }
+      })
+    }
 
     return await this.getById(_id)
   }

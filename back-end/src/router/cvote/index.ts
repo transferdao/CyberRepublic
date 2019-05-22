@@ -8,6 +8,8 @@ import update from './update'
 import vote from './vote'
 import finish from './finish'
 import update_notes from './update_notes'
+import update_bidding from './update_bidding'
+import bid from './bid'
 
 export default Base.setRouter([
     {
@@ -49,5 +51,15 @@ export default Base.setRouter([
         path : '/update_notes',
         router : update_notes,
         method : 'post'
-    }
+    },
+    {
+        path : '/update_bidding',
+        router : update_bidding,
+        method : 'post'
+    },
+    {
+        path : '/bid',
+        router : bid,
+        method : 'post'
+    },
 ])

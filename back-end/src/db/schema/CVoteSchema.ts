@@ -30,6 +30,15 @@ export const CVoteHistorySchema = {
   },
 }
 
+export const FileSchema = {
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+    required: true
+  },
+  file: String,
+}
+
 export const CVote = {
   title: {
     type: String,
@@ -98,5 +107,11 @@ export const CVote = {
   reference: {
     type: Schema.Types.ObjectId,
     ref: 'suggestion',
+  },
+  bidding: {
+    files: [FileSchema],
+    endDate: Date,
+    status: String,
+    template: String,
   }
 }
