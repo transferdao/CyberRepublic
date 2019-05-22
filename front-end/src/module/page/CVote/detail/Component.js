@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Form, Spin, Button, Input, message, Modal, Icon,
+  Form, Spin, Button, Input, message, Modal, Tabs,
 } from 'antd'
 import { Link } from 'react-router-dom'
 import I18N from '@/I18N'
@@ -12,6 +12,7 @@ import { CVOTE_RESULT, CVOTE_STATUS } from '@/constant'
 import MetaComponent from '@/module/shared/meta/Container'
 import VoteResultComponent from '../common/vote_result/Component'
 import EditForm from '../edit/Container'
+import Bidding from '../bidding/Container'
 import Footer from '@/module/layout/Footer/Container'
 import BackLink from '@/module/shared/BackLink/Component'
 import CRPopover from '@/module/shared/Popover/Component'
@@ -20,6 +21,7 @@ import Translation from '@/module/common/Translation/Container'
 import { Title, Label } from './style'
 import './style.scss'
 
+const { TabPane } = Tabs
 const { TextArea } = Input
 
 const SubTitle = ({ dataList }) => {
@@ -72,6 +74,35 @@ class C extends StandardPage {
     const metaNode = this.renderMeta()
     const titleNode = this.renderTitle()
     const labelNode = this.renderLabelNode()
+    const body = this.renderTabs()
+    return (
+      <div>
+        <div className="p_CVoteDetail">
+          <BackLink link="/proposals" />
+          {metaNode}
+          {titleNode}
+          {labelNode}
+          {body}
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  renderTabs() {
+    return (
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Tab 1" key="1">
+          {this.renderDetailSection()}
+        </TabPane>
+        <TabPane tab="Tab 2" key="2">
+          {this.renderBiddingSection()}
+        </TabPane>
+      </Tabs>
+    )
+  }
+
+  renderDetailSection() {
     const subTitleNode = this.renderSubTitle()
     const contentNode = this.renderContent()
     const notesNode = this.renderNotes()
@@ -80,25 +111,23 @@ class C extends StandardPage {
     const voteDetailNode = this.renderVoteResults()
     const editFormNode = this.renderEditForm()
     const translationBtn = this.renderTranslationBtn()
-
     return (
       <div>
-        <div className="p_CVoteDetail">
-          <BackLink link="/proposals" />
-          {metaNode}
-          {titleNode}
-          {labelNode}
-          {subTitleNode}
-          {contentNode}
-          {translationBtn}
-          {notesNode}
-          {voteActionsNode}
-          {adminActionsNode}
-          {voteDetailNode}
-          {editFormNode}
-        </div>
-        <Footer />
+        {subTitleNode}
+        {contentNode}
+        {translationBtn}
+        {notesNode}
+        {voteActionsNode}
+        {adminActionsNode}
+        {voteDetailNode}
+        {editFormNode}
       </div>
+    )
+  }
+
+  renderBiddingSection() {
+    return (
+      <Bidding data={this.state.data} />
     )
   }
 
