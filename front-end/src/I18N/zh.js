@@ -2,12 +2,14 @@ import { TASK_STATUS, CVOTE_STATUS } from '@/constant'
 import council from './zh/council'
 import home from './zh/home'
 import release from './zh/release'
+import bidding from './zh/bidding'
 import getting_started from './en/getting_started'
 
 const zh = {
   council,
   home,
   release,
+  bidding,
   getting_started,
   // Header
   '0000': 'ALPHA版本',
@@ -699,6 +701,9 @@ const zh = {
   'council.voting.status': '状态',
   'council.voting.createdAt': '创建日期',
   'council.voting.proposedAt': '发布日期',
+
+  'council.voting.tab.detail': '提案详情',
+  'council.voting.tab.bidding': '投标',
 
   'council.voting.type.newMotion': '新动议',
   'council.voting.type.motionAgainst': '反对动议',

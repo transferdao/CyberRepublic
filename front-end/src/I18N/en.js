@@ -2,12 +2,14 @@ import { TASK_STATUS, TASK_TYPE, CVOTE_STATUS } from '@/constant'
 import council from './en/council'
 import home from './en/home'
 import release from './en/release'
+import bidding from './en/bidding'
 import getting_started from './en/getting_started'
 
 const en = {
   council,
   home,
   release,
+  bidding,
   getting_started,
   // Header
   '0000': 'ALPHA',
@@ -700,6 +702,9 @@ const en = {
   'council.voting.status': 'Status',
   'council.voting.createdAt': 'Created',
   'council.voting.proposedAt': 'Proposed',
+
+  'council.voting.tab.detail': 'Proposal Detail',
+  'council.voting.tab.bidding': 'Bidding',
 
   'council.voting.type.newMotion': 'New Motion',
   'council.voting.type.motionAgainst': 'Motion Against',
