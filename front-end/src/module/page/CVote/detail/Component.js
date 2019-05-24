@@ -92,10 +92,10 @@ class C extends StandardPage {
   renderTabs() {
     return (
       <Tabs defaultActiveKey="1">
-        <TabPane tab="Tab 1" key="1">
+        <TabPane tab={I18N.get('council.voting.tab.detail')} key="1">
           {this.renderDetailSection()}
         </TabPane>
-        <TabPane tab="Tab 2" key="2">
+        <TabPane tab={I18N.get('council.voting.tab.bidding')} key="2">
           {this.renderBiddingSection()}
         </TabPane>
       </Tabs>
