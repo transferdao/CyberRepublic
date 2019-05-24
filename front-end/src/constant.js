@@ -242,6 +242,8 @@ export const CVOTE_RESULT_COLOR = {
   [CVOTE_RESULT.REJECT]: '#BE1313',
 }
 
+export const BIDDING_STATUS = create(['NOT_NEEDED', 'UNSTARTED', 'STARTED', 'SUBMITTING', 'REVIEWING', 'SELECTED', 'PUBLISHED'])
+
 export const RESOURCE_TYPE_TO_TEXT = {
   CVote: 'Proposal',
 }
