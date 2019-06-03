@@ -2,6 +2,7 @@ import { Schema } from 'mongoose'
 import * as _ from 'lodash'
 import { constant } from '../../constant'
 import { SubscriberSchema } from './SubscriberSchema'
+import { FileSchema } from './FileSchema'
 
 
 export const CVoteResultSchema = {
@@ -30,14 +31,10 @@ export const CVoteHistorySchema = {
   },
 }
 
-export const FileSchema = {
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true
-  },
-  file: String,
-}
+// export const BiddingInfoSchema = {
+//   endDate: Date,
+//   status: String,
+// }
 
 export const CVote = {
   title: {
@@ -108,10 +105,12 @@ export const CVote = {
     type: Schema.Types.ObjectId,
     ref: 'suggestion',
   },
+  attachments: [FileSchema],
+  // bidding related
+  biddingEndDate: Date,
+  // this proposal is generated from a bidding, type will be RFP
   bidding: {
-    files: [FileSchema],
-    endDate: Date,
-    status: String,
-    template: String,
+    type: Schema.Types.ObjectId,
+    ref: 'cvote',
   }
 }
