@@ -3,7 +3,7 @@ import { FileSchema } from './FileSchema'
 
 export const Bidding = {
   files: [FileSchema],
-  biddedBy: {
+  createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'users',
     required: true
