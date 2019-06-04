@@ -1,5 +1,5 @@
 import Base from './Base'
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 import * as _ from 'lodash'
 import { constant } from '../constant'
 import { permissions } from '../utility'
@@ -23,10 +23,13 @@ export default class extends Base {
     const db_cvote = this.getDBModel('CVote')
     const db_user = this.getDBModel('User')
     const db_suggestion = this.getDBModel('Suggestion')
-    const currentUserId = _.get(this.currentUser, '_id')
+    let currentUserId = _.get(this.currentUser, '_id')
+    if (!currentUserId) return
+    if (typeof currentUserId === 'string') currentUserId = Types.ObjectId(currentUserId)
+    console.log('currentUserId: ', currentUserId, typeof currentUserId, this.currentUser, typeof this.currentUser._id)
     const {
       title, type, content, published, proposedBy, motionId, isConflict, notes,
-      suggestionId,
+      suggestionId, biddingEndDate, attachments,
     } = param
 
     const vid = await this.getNewVid()
@@ -45,6 +48,9 @@ export default class extends Base {
       notes,
       createdBy: this.currentUser._id
     }
+    // 5: RFP
+    if (type === 5 && biddingEndDate) doc.biddingEndDate = biddingEndDate
+    if (attachments) doc.attachments = attachments
 
     const suggestion = suggestionId && await db_suggestion.findById(suggestionId)
     if (!_.isEmpty(suggestion)) {
@@ -271,7 +277,7 @@ export default class extends Base {
     const db_user = this.getDBModel('User')
     const db_cvote = this.getDBModel('CVote')
     const currentUserId = _.get(this.currentUser, '_id')
-    const { _id, published, notes, content, isConflict, proposedBy, title, type } = param
+    const { _id, published, notes, content, isConflict, proposedBy, title, type, biddingEndDate, attachments } = param
 
     if (!this.currentUser || !this.currentUser._id) {
       throw 'cvoteservice.update - invalid current user'
@@ -294,6 +300,9 @@ export default class extends Base {
     if (proposedBy) doc.proposedBy = proposedBy
     if (title) doc.title = title
     if (type) doc.type = type
+    // 5: RFP
+    if (type === 5 && biddingEndDate) doc.biddingEndDate = biddingEndDate
+    if (attachments) doc.attachments = attachments
 
     if (willChangeToPublish) {
       doc.status = constant.CVOTE_STATUS.PROPOSED
@@ -433,6 +442,7 @@ export default class extends Base {
     return await this.getById(_id)
   }
 
+  // bidding update
   public async updateBidding(param: any): Promise<Document> {
     const db_cvote = this.getDBModel('CVote')
     const { _id, status, endDate, template } = param
@@ -456,6 +466,7 @@ export default class extends Base {
     return await this.getById(_id)
   }
 
+  // attend bidding
   public async bid(param: any): Promise<Document> {
     const db_cvote = this.getDBModel('CVote')
     const userId = _.get(this.currentUser, '_id')
