@@ -258,6 +258,8 @@ export const CVOTE_TYPE = {
   1: 'New Motion',
   2: 'Motion Against',
   3: 'Anything Else',
+  4: 'Bidding',
+  5: 'RFP',
 }
 
 export const USER_SKILLSET = {

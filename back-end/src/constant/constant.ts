@@ -128,6 +128,14 @@ export const TASK_CANDIDATE_CATEGORY = {
   RSVP: 'RSVP'
 }
 
+export const CVOTE_TYPE = {
+  1: 'New Motion',
+  2: 'Motion Against',
+  3: 'Anything Else',
+  4: 'Bidding',
+  5: 'RFP',
+}
+
 // ACTIVE === PASSED, currently 'published' flag is used for 'DRAFT'
 export const CVOTE_STATUS = create(['DRAFT', 'PROPOSED', 'ACTIVE', 'REJECT', 'FINAL', 'DEFERRED'])
 export const CVOTE_RESULT = {
@@ -138,6 +146,8 @@ export const CVOTE_RESULT = {
 }
 // expiration period: 7 days
 export const CVOTE_EXPIRATION = 1000 * 60 * 60 * 24 * 7
+
+export const BIDDING_STATUS = create(['SUBMITTING_RFP', 'CLOSED'])
 
 export const ONE_DAY = 1000 * 60 * 60 * 24
 
