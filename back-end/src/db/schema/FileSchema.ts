@@ -1,7 +1,11 @@
 export const FileSchema = {
   name: String,
-  url: String,
-  size: String,
+  url: {
+    type: String,
+    required: true,
+  },
+  size: Number,
+  filetype: String,
   createdAt: {
     type: Date,
     default: Date.now,

@@ -31,11 +31,6 @@ export const CVoteHistorySchema = {
   },
 }
 
-// export const BiddingInfoSchema = {
-//   endDate: Date,
-//   status: String,
-// }
-
 export const CVote = {
   title: {
     type: String,

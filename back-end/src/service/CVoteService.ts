@@ -26,7 +26,6 @@ export default class extends Base {
     let currentUserId = _.get(this.currentUser, '_id')
     if (!currentUserId) return
     if (typeof currentUserId === 'string') currentUserId = Types.ObjectId(currentUserId)
-    console.log('currentUserId: ', currentUserId, typeof currentUserId, this.currentUser, typeof this.currentUser._id)
     const {
       title, type, content, published, proposedBy, motionId, isConflict, notes,
       suggestionId, biddingEndDate, attachments,
