@@ -12,6 +12,7 @@ import { CVOTE_STATUS, CVOTE_STATUS_TEXT } from '@/constant'
 import { upload_file } from '@/util'
 import { getSafeUrl } from '@/util/url'
 import moment from 'moment/moment'
+import FileManager from '@/module/common/FileManager/Container'
 
 import { Container, Title, DeleteLink } from './style'
 
@@ -35,19 +36,6 @@ class C extends BaseComponent {
     this.setState({ loading: f })
   }
 
-  normFileList (fileList) {
-    const result = _.map(fileList, file => {
-      console.log('file:', file)
-      const { name, type, size, response } = file
-      return {
-        name,
-        filetype: type,
-        size,
-        url: response,
-      }
-    })
-    return result
-  }
 
   handleSubmit = async (e, fields = {}) => {
     e.preventDefault()
@@ -56,7 +44,7 @@ class C extends BaseComponent {
 
     form.validateFields(async (err, values) => {
       if (err) return
-      const { title, type, notes, motionId, isConflict, content, biddingEndDate, attachments } = values
+      const { title, type, notes, motionId, isConflict, content, biddingEndDate } = values
       const param = {
         title,
         type,
@@ -65,7 +53,7 @@ class C extends BaseComponent {
         isConflict,
         content,
         published: true,
-        attachments: this.normFileList(attachments).concat(this.state.fileList),
+        attachments: this.state.fileList,
         ...fields,
       }
       if (!edit) param.proposedBy = fullName
@@ -172,43 +160,6 @@ class C extends BaseComponent {
     const notes_el = (
       <TextArea rows={4} />
     )
-    // attachment
-    const attachment_fn = getFieldDecorator('attachments', {
-      valuePropName: 'fileList',
-      getValueFromEvent: e => (Array.isArray(e) ? e : _.get(e, 'fileList')),
-      rules: []
-    })
-    const p_attachment = {
-      accept: '.pdf',
-      customRequest: ({ file, onSuccess }) => {
-        this.setState({
-          attachment_loading: true
-        })
-        upload_file(file).then((d) => {
-          this.setState({
-            attachment_loading: false,
-          })
-          onSuccess(d.url, d)
-        })
-      }
-    }
-    const attachment_el = (
-      <Upload.Dragger name="attachments" {...p_attachment}>
-        {this.state.attachment_loading ? (
-          <div>
-            <p className="ant-upload-text" />
-            <p className="ant-upload-text"><Icon type="loading" /></p>
-            <p className="ant-upload-hint" />
-          </div>
-        ) : (
-          <div>
-            <p className="ant-upload-text">Drag files here</p>
-            <p className="ant-upload-text">- or -</p>
-            <p className="ant-upload-hint">Click to upload</p>
-          </div>
-        )}
-      </Upload.Dragger>
-    )
 
     const result = {
       title: title_fn(title_el),
@@ -217,68 +168,11 @@ class C extends BaseComponent {
       content: content_fn(content_el),
       isConflict: isConflict_fn(isConflict_el),
       notes: notes_fn(notes_el),
-      attachments: attachment_fn(attachment_el),
     }
 
     if (form && form.getFieldValue('type') === 4) result.biddingEndDate = biddingEndDate_fn(biddingEndDate_el)
 
     return result
-  }
-
-  renderFileList () {
-    const dataSource = this.state.fileList
-    const { canManage } = this.props
-    const columns = [
-      // {
-      //   title: I18N.get('from.CVoteForm.fileList.number'),
-      //   render: (vid, item, index) => (
-      //   ),
-      // },
-      {
-        title: I18N.get('from.CVoteForm.fileList.files'),
-        dataIndex: 'name',
-        render: (value, item) => (
-          <a href={item.url} className="tableLink">
-            {value}
-          </a>
-        ),
-      },
-      // {
-      //   title: I18N.get('from.CVoteForm.fileList.size'),
-      //   dataIndex: 'size',
-      //   render: (value, item) => value,
-      // },
-      {
-        title: I18N.get('from.CVoteForm.fileList.time'),
-        dataIndex: 'createdAt',
-        render: (value, item) => moment(value).format('MMM D, YYYY'),
-      },
-    ]
-    const removeCol = {
-      title: I18N.get('from.CVoteForm.fileList.actions'),
-      dataIndex: '_id',
-      render: (value, item) => {
-        return <DeleteLink onClick={this.removeFile.bind(this, value)}>{I18N.get('from.CVoteForm.fileList.delete')}</DeleteLink>
-      },
-    }
-
-    if (canManage) columns.push(removeCol)
-
-    const result = (
-      <Table
-        columns={columns}
-        // loading={this.state.loading}
-        dataSource={dataSource}
-        rowKey={record => record._id}
-      />
-    )
-    return result
-  }
-
-  removeFile = fileId => {
-    // remove from fileList
-    const newList = _.filter(this.state.fileList, file => file._id !== fileId)
-    this.setState({ fileList: newList })
   }
 
   togglePersist() {
@@ -354,7 +248,7 @@ class C extends BaseComponent {
           {isSecretary && <FormItem label={I18N.get('from.CVoteForm.label.note')} {...formItemLayoutOneLine}>{formProps.notes}</FormItem>}
 
           <FormItem label={I18N.get('from.CVoteForm.label.attachments')} {...formItemLayoutOneLine}>{formProps.attachments}</FormItem>
-          {this.renderFileList()}
+          {this.renderFileManager()}
           <Row gutter={8} type="flex" justify="center">
             {this.renderCancelBtn()}
             {this.renderSaveDraftBtn()}
@@ -363,6 +257,24 @@ class C extends BaseComponent {
         </Form>
       </Container>
     )
+  }
+
+  renderFileManager() {
+    const fileList = _.get(this.props, 'data.attachments')
+    const { canManage } = this.props
+    const result = (
+      <FileManager
+        fileList={fileList}
+        onChange={this.onFileChange}
+        canManage={canManage}
+      />
+    )
+    return result
+  }
+
+  onFileChange = (fileList) => {
+    console.log('fileList: ', fileList)
+    this.setState({ fileList })
   }
 
   gotoList = () => {
