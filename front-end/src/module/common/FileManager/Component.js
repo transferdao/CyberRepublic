@@ -9,7 +9,7 @@ import { upload_file, file as fileUtil } from '@/util'
 import moment from 'moment/moment'
 import { FILESIZE_LIMIT } from '@/constant'
 
-import { Container, Title, DeleteLink } from './style'
+import { Container, DeleteLink } from './style'
 
 export default class extends BaseComponent {
   constructor(props) {
@@ -22,12 +22,12 @@ export default class extends BaseComponent {
   }
 
   ord_render() {
-    const { canManage } = this.props
+    const { hideUploader } = this.props
 
     return (
       <Container>
         {this.renderFileList()}
-        {this.renderUploader()}
+        {!hideUploader && this.renderUploader()}
       </Container>
     )
   }
@@ -142,6 +142,7 @@ export default class extends BaseComponent {
         // loading={this.state.loading}
         dataSource={dataSource}
         rowKey={record => record._id}
+        pagination={false}
       />
     )
     return result

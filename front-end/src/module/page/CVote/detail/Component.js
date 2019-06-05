@@ -154,6 +154,7 @@ class C extends StandardPage {
       <FileManager
         fileList={fileList}
         onChange={this.onFileChange}
+        hideUploader={true}
       />
     )
     return result
