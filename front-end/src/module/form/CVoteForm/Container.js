@@ -14,6 +14,8 @@ export default createContainer(Component, state => ({
       { name: I18N.get('council.voting.type.newMotion'), code: 1 },
       { name: I18N.get('council.voting.type.motionAgainst'), code: 2 },
       { name: I18N.get('council.voting.type.anythingElse'), code: 3 },
+      { name: I18N.get('council.voting.type.bidding'), code: 4 },
+      { name: I18N.get('council.voting.type.rfp'), code: 5 },
     ],
     select_vote: [
       { name: 'Support', value: 'support' },

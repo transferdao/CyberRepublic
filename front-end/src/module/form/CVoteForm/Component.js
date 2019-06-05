@@ -1,13 +1,17 @@
 import React from 'react'
 import BaseComponent from '@/model/BaseComponent'
 import {
-  Form, Input, Button, Select, Row, Col, message, Modal,
+  Form, Input, Button, Select, Row, Col, message, Modal, DatePicker,
+  Icon, Upload,
 } from 'antd'
 import ReactQuill from 'react-quill'
 import { TOOLBAR_OPTIONS } from '@/config/constant'
 import I18N from '@/I18N'
 import _ from 'lodash'
 import { CVOTE_STATUS, CVOTE_STATUS_TEXT } from '@/constant'
+import { upload_file } from '@/util'
+import { getSafeUrl } from '@/util/url'
+import moment from 'moment/moment'
 
 import { Container, Title, Btn } from './style'
 
@@ -37,7 +41,7 @@ class C extends BaseComponent {
 
     form.validateFields(async (err, values) => {
       if (err) return
-      const { title, type, notes, motionId, isConflict, content } = values
+      const { title, type, notes, motionId, isConflict, content, biddingEndDate, attachments } = values
       const param = {
         title,
         type,
@@ -46,10 +50,12 @@ class C extends BaseComponent {
         isConflict,
         content,
         published: true,
+        attachments,
         ...fields,
       }
       if (!edit) param.proposedBy = fullName
       if (suggestionId) param.suggestionId = suggestionId
+      if (biddingEndDate) param.biddingEndDate = biddingEndDate
 
       this.ord_loading(true)
       if (edit) {
@@ -78,9 +84,9 @@ class C extends BaseComponent {
   }
 
   getInputProps(data) {
-    const { edit } = this.props
+    const { edit, form } = this.props
     const s = this.props.static
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator } = form
 
     const title_fn = getFieldDecorator('title', {
       rules: [{ required: true }],
@@ -111,6 +117,13 @@ class C extends BaseComponent {
     })
     const status_el = (
       <Select disabled={true} />
+    )
+
+    const biddingEndDate_fn = getFieldDecorator('biddingEndDate', {
+      initialValue: edit ? moment(_.get(data, 'timeline')) : undefined,
+    })
+    const biddingEndDate_el = (
+      <DatePicker size="large" placeholder="" style={{width: '100%'}} />
     )
 
     const content_fn = getFieldDecorator('content', {
@@ -144,15 +157,123 @@ class C extends BaseComponent {
     const notes_el = (
       <TextArea rows={4} />
     )
+    // attachment
+    const attachment_fn = getFieldDecorator('attachments', {
+      valuePropName: 'fileList',
+      getValueFromEvent: this.normFile,
+      rules: []
+    })
+    const p_attachment = {
+      accept: '.pdf',
+      // defaultFileList: data.attachments,
+      defaultFileList: [
+        {
+          // "name": "file 1.pdf",
+          // "url": "http://localhost:3001/assets/images/logo.svg",
+          // "size": 12000,
+          // "type": "application/pdf"
+          percent: 0,
+          size: 709895,
+          status: "uploading",
+          type: "application/pdf",
+          uid: "rc-uplo-1",
+          "url": "http://localhost:3001/assets/images/logo.svg",
+        },
+        {
+          percent: 0,
+          size: 709895,
+          status: "uploading",
+          type: "application/pdf",
+          uid: "rc-upload-1559705776999-2",
+          "url": "http://localhost:3001/assets/images/logo.svg",
+          // "name": "file 22.pdf",
+          // "url": "http://localhost:3001/assets/images/logo.svg",
+          // "size": 12000,
+          // "type": "application/pdf"
+        }
+      ],
+      customRequest: (info) => {
+        this.setState({
+          attachment_loading: true
+        })
+        upload_file(info.file).then((d) => {
+          console.log('info: ', info)
+          // info.file.status = 'done'
+          this.setState({
+            attachment_loading: false,
+            // attachment_url: d.url,
+          //   attachment_type: d.type,
+          //   attachment_filename: d.filename,
+          })
+          info.onSuccess(d.url, d)
+        })
+      }
+    }
+    const attachment_el = (
+      <Upload.Dragger name="attachments" {...p_attachment}>
+        {/* {
+          this.state.attachment_url ? (
+            <a target="_blank" href={getSafeUrl(this.state.attachment_url)}>
+              <Icon type="file"/>
+              {' '}
+&nbsp;
+              {this.state.attachment_filename}
+            </a>
+          ) : (
+            <Button loading={this.state.attachment_loading}>
+              <Icon type="upload" />
+              {' '}
+              {I18N.get('from.OrganizerAppForm.click.upload')}
+            </Button>
+          )
+        } */}
+        {this.state.attachment_loading ? (
+          <div>
+            <p className="ant-upload-text" />
+            <p className="ant-upload-text"><Icon type="loading" /></p>
+            <p className="ant-upload-hint" />
+          </div>
+        ) : (
+          <div>
+            <p className="ant-upload-text">Drag files here</p>
+            <p className="ant-upload-text">- or -</p>
+            <p className="ant-upload-hint">Click to upload</p>
+          </div>
+        )}
+      </Upload.Dragger>
+    )
 
-    return {
+    const result = {
       title: title_fn(title_el),
       type: type_fn(type_el),
       status: status_fn(status_el),
       content: content_fn(content_el),
       isConflict: isConflict_fn(isConflict_el),
       notes: notes_fn(notes_el),
+      attachments: attachment_fn(attachment_el),
     }
+
+    if (form && form.getFieldValue('type') === 4) result.biddingEndDate = biddingEndDate_fn(biddingEndDate_el)
+
+    return result
+  }
+
+  normFile = e => {
+    console.log('Upload event:', e)
+    const fileList = Array.isArray(e) ? e : _.get(e, 'fileList')
+    const result = _.map(fileList, file => {
+      console.log('file:', file)
+      const { name, type, size, response, uid } = file
+      return {
+        name,
+        filetype: type || 'application/pdf',
+        size,
+        response,
+        url: response,
+        uid,
+      }
+    })
+    return result
   }
 
   togglePersist() {
@@ -209,14 +330,25 @@ class C extends BaseComponent {
             <Col sm={24} md={11} lg={11}>
               <FormItem disabled={true} label={I18N.get('from.CVoteForm.label.voteStatus')} {...formItemLayout}>{formProps.status}</FormItem>
             </Col>
+            {formProps.biddingEndDate && (
+              <Col sm={24} md={11} lg={11}>
+                <FormItem
+                  label={I18N.get('from.CVoteForm.label.biddingEndDate')} {...formItemLayout}
+                  help={I18N.get('from.CVoteForm.label.biddingEndDate.help')}
+                >
+                  {formProps.biddingEndDate}
+                </FormItem>
+              </Col>
+            )}
           </Row>
-
 
           <FormItem label={I18N.get('from.CVoteForm.label.title')} {...formItemLayoutOneLine}>{ formProps.title }</FormItem>
 
           <FormItem label={I18N.get('from.CVoteForm.label.content')} {...formItemLayoutOneLine}>{formProps.content}</FormItem>
 
           {isSecretary && <FormItem label={I18N.get('from.CVoteForm.label.note')} {...formItemLayoutOneLine}>{formProps.notes}</FormItem>}
+
+          <FormItem label={I18N.get('from.CVoteForm.label.attachments')} {...formItemLayoutOneLine}>{formProps.attachments}</FormItem>
 
           <Row gutter={8} type="flex" justify="center">
             {this.renderCancelBtn()}
