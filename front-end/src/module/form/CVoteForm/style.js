@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Button } from 'antd'
+import { text } from '@/constants/color'
 
 export const Container = styled.div`
   text-align: left;
@@ -31,4 +32,9 @@ export const Btn = styled(Button)`
 
 export const Text = styled.div`
   text-align: center;
+`
+
+export const DeleteLink = styled.span`
+  color: ${text.primary};
+  cursor: pointer;
 `

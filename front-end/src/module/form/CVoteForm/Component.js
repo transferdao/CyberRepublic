@@ -13,7 +13,7 @@ import { upload_file } from '@/util'
 import { getSafeUrl } from '@/util/url'
 import moment from 'moment/moment'
 
-import { Container, Title, Btn } from './style'
+import { Container, Title, DeleteLink } from './style'
 
 const FormItem = Form.Item
 const { TextArea } = Input
@@ -228,6 +228,7 @@ class C extends BaseComponent {
 
   renderFileList () {
     const dataSource = this.state.fileList
+    const { canManage } = this.props
     const columns = [
       // {
       //   title: I18N.get('from.CVoteForm.fileList.number'),
@@ -253,14 +254,16 @@ class C extends BaseComponent {
         dataIndex: 'createdAt',
         render: (value, item) => moment(value).format('MMM D, YYYY'),
       },
-      {
-        title: I18N.get('from.CVoteForm.fileList.size'),
-        dataIndex: '_id',
-        render: (value, item) => {
-          return <span onClick={this.removeFile.bind(this, item.value)}>{I18N.get('from.CVoteForm.fileList.delete')}</span>
-        },
-      },
     ]
+    const removeCol = {
+      title: I18N.get('from.CVoteForm.fileList.actions'),
+      dataIndex: '_id',
+      render: (value, item) => {
+        return <DeleteLink onClick={this.removeFile.bind(this, value)}>{I18N.get('from.CVoteForm.fileList.delete')}</DeleteLink>
+      },
+    }
+
+    if (canManage) columns.push(removeCol)
 
     const result = (
       <Table
@@ -274,8 +277,9 @@ class C extends BaseComponent {
   }
 
   removeFile = fileId => {
-    // get fileList
     // remove from fileList
+    const newList = _.filter(this.state.fileList, file => file._id !== fileId)
+    this.setState({ fileList: newList })
   }
 
   togglePersist() {
