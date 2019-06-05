@@ -190,6 +190,8 @@ class C extends StandardPage {
   onEdit = () => {
     this.switchEditMode()
     this.refetch()
+    // FIXME: hack for FileManger update
+    window.location.reload()
   }
 
   renderMeta() {
