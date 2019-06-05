@@ -4,6 +4,8 @@ const create = (list) => {
   return _.zipObject(list, list)
 }
 
+export const FILESIZE_LIMIT = 50 * 1000 * 1000 // 50M
+
 export const CR_LINKS = {
   FACEBOOK: 'https://www.facebook.com/ElastosCyberRepublic',
   GITHUB: 'https://github.com/cyber-republic',

@@ -5,8 +5,9 @@ import {
 } from 'antd'
 import I18N from '@/I18N'
 import _ from 'lodash'
-import { upload_file } from '@/util'
+import { upload_file, file as fileUtil } from '@/util'
 import moment from 'moment/moment'
+import { FILESIZE_LIMIT } from '@/constant'
 
 import { Container, Title, DeleteLink } from './style'
 
@@ -66,6 +67,7 @@ export default class extends BaseComponent {
         this.setState({
           attachment_loading: true
         })
+        if (file.size > FILESIZE_LIMIT) return
         upload_file(file).then((d) => {
           this.setState({
             attachment_loading: false,
@@ -113,11 +115,11 @@ export default class extends BaseComponent {
           </a>
         ),
       },
-      // {
-      //   title: I18N.get('from.CVoteForm.fileList.size'),
-      //   dataIndex: 'size',
-      //   render: (value, item) => value,
-      // },
+      {
+        title: I18N.get('from.CVoteForm.fileList.size'),
+        dataIndex: 'size',
+        render: (value, item) => fileUtil.humanFileSize(value),
+      },
       {
         title: I18N.get('from.CVoteForm.fileList.time'),
         dataIndex: 'createdAt',

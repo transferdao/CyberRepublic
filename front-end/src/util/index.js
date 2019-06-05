@@ -5,6 +5,7 @@ import { api_request, upload_file } from './request'
 import { loginRedirectWithQuery } from './login'
 import * as permissions from './permissions'
 import * as url from './url'
+import * as file from './file'
 
 /**
  * Helper for React-Redux connect
@@ -39,4 +40,5 @@ export {
   loginRedirectWithQuery,
   permissions,
   url,
+  file,
 }
