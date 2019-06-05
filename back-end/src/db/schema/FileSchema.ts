@@ -10,4 +10,8 @@ export const FileSchema = {
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 }
