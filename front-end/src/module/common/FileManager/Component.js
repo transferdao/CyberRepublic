@@ -9,7 +9,8 @@ import { upload_file, file as fileUtil } from '@/util'
 import moment from 'moment/moment'
 import { FILESIZE_LIMIT } from '@/constant'
 
-import { Container, DeleteLink } from './style'
+import styled from 'styled-components'
+import { text } from '@/constants/color'
 
 export default class extends BaseComponent {
   constructor(props) {
@@ -26,7 +27,7 @@ export default class extends BaseComponent {
 
     return (
       <Container>
-        {this.renderFileList()}
+        <TableContainer>{this.renderFileList()}</TableContainer>
         {!hideUploader && this.renderUploader()}
       </Container>
     )
@@ -154,3 +155,16 @@ export default class extends BaseComponent {
     this.setState({ fileListExisted: newList }, this.onChange)
   }
 }
+
+const Container = styled.div`
+  margin-bottom: 30px;
+`
+
+const TableContainer = styled.div`
+  margin-bottom: 30px;
+`
+
+const DeleteLink = styled.span`
+  color: ${text.primary};
+  cursor: pointer;
+`
