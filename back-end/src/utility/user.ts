@@ -11,4 +11,9 @@ export default {
 
     return [firstName, lastName].join(' ')
   },
+  isSelf(userIdA: any, userIdB: any) {
+    if (!userIdA || !userIdB) return false
+
+    return userIdA.toString() === userIdB.toString()
+  }
 }

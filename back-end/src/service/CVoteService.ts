@@ -62,7 +62,7 @@ export default class extends Base {
       doc.proposedAt = Date.now()
       _.each(councilMembers, user => {
         // use ObjectId.equals
-        const value = currentUserId.equals(user._id) ? constant.CVOTE_RESULT.SUPPORT : constant.CVOTE_RESULT.UNDECIDED
+        const value = userUtil.isSelf(currentUserId, user._id) ? constant.CVOTE_RESULT.SUPPORT : constant.CVOTE_RESULT.UNDECIDED
         voteResult.push({ votedBy: user._id, value })
       })
       doc.voteResult = voteResult
@@ -311,7 +311,7 @@ export default class extends Base {
       const voteResult = []
       _.each(councilMembers, user => {
         // use ObjectId.equals
-        const value = currentUserId.equals(user._id) ? constant.CVOTE_RESULT.SUPPORT : constant.CVOTE_RESULT.UNDECIDED
+        const value = userUtil.isSelf(currentUserId, user._id) ? constant.CVOTE_RESULT.SUPPORT : constant.CVOTE_RESULT.UNDECIDED
         voteResult.push({ votedBy: user._id, value })
         // send email
       })
