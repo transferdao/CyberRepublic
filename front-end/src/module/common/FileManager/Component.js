@@ -1,30 +1,38 @@
 import React from 'react'
 import BaseComponent from '@/model/BaseComponent'
 import {
-  Form, Input, Button, Select, Row, Col, message, Modal, DatePicker,
   Icon, Upload, Table,
 } from 'antd'
 import I18N from '@/I18N'
 import _ from 'lodash'
 import { upload_file } from '@/util'
-import { getSafeUrl } from '@/util/url'
 import moment from 'moment/moment'
 
 import { Container, Title, DeleteLink } from './style'
 
-class C extends BaseComponent {
+export default class extends BaseComponent {
   constructor(props) {
     super(props)
 
     this.state = {
-      fileList: props.fileList || [],
-      fileListUploaded: props.fileListUploaded || [],
+      fileListExisted: props.fileList || [],
+      fileListNew: props.fileListNew || [],
     }
+  }
+
+  ord_render() {
+    const { canManage } = this.props
+
+    return (
+      <Container>
+        {this.renderFileList()}
+        {this.renderUploader()}
+      </Container>
+    )
   }
 
   normFileList (fileList) {
     const result = _.map(fileList, file => {
-      console.log('file:', file)
       const { name, type, size, response } = file
       return {
         name,
@@ -36,20 +44,23 @@ class C extends BaseComponent {
     return result
   }
 
-  getFileList () {
-    return this.normFileList(this.state.fileListUploaded).concat(this.state.fileList)
+  getFileList (fileList) {
+    return this.normFileList(fileList).concat(this.state.fileListExisted)
   }
 
   onChange = (e) => {
-    console.log('onChange: ', e)
+    const { onChange } = this.props
+    const fileList = _.get(e, 'fileList')
+    console.log('onChange: ', fileList)
+    if (!onChange) return
+    onChange(this.getFileList(fileList))
   }
 
   renderUploader() {
-    // attachment
     const props = {
       accept: '.pdf',
       valuePropName: 'fileList',
-      getValueFromEvent: e => (Array.isArray(e) ? e : _.get(e, 'fileList')),
+      // getValueFromEvent: e => (Array.isArray(e) ? e : _.get(e, 'fileList')),
       onChange: this.onChange,
       customRequest: ({ file, onSuccess }) => {
         this.setState({
@@ -85,7 +96,7 @@ class C extends BaseComponent {
   }
 
   renderFileList () {
-    const dataSource = this.state.fileList
+    const dataSource = this.state.fileListExisted
     const { canManage } = this.props
     const columns = [
       // {
@@ -136,19 +147,7 @@ class C extends BaseComponent {
 
   removeFile = fileId => {
     // remove from fileList
-    const newList = _.filter(this.state.fileList, file => file._id !== fileId)
-    this.setState({ fileList: newList })
-  }
-
-  ord_render() {
-    const { data, canManage } = this.props
-
-    return (
-      <Container>
-        {this.renderFileList()}
-      </Container>
-    )
+    const newList = _.filter(this.state.fileListExisted, file => file._id !== fileId)
+    this.setState({ fileListExisted: newList }, this.onChange)
   }
 }
-
-export default Form.create()(C)

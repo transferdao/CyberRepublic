@@ -17,6 +17,7 @@ import Footer from '@/module/layout/Footer/Container'
 import BackLink from '@/module/shared/BackLink/Component'
 import CRPopover from '@/module/shared/Popover/Component'
 import Translation from '@/module/common/Translation/Container'
+import FileManager from '@/module/common/FileManager/Container'
 
 import { Title, Label } from './style'
 import './style.scss'
@@ -111,6 +112,7 @@ class C extends StandardPage {
     const voteDetailNode = this.renderVoteResults()
     const editFormNode = this.renderEditForm()
     const translationBtn = this.renderTranslationBtn()
+    const fileManagerNode = this.renderFileManager()
     return (
       <div>
         {subTitleNode}
@@ -121,6 +123,7 @@ class C extends StandardPage {
         {adminActionsNode}
         {voteDetailNode}
         {editFormNode}
+        {fileManagerNode}
       </div>
     )
   }
@@ -143,6 +146,21 @@ class C extends StandardPage {
         <Translation text={text} />
       </div>
     )
+  }
+
+  renderFileManager() {
+    const fileList = _.get(this.state, 'data.attachments')
+    const result = (
+      <FileManager
+        fileList={fileList}
+        onChange={this.onFileChange}
+      />
+    )
+    return result
+  }
+
+  onFileChange = (fileList) => {
+    console.log('fileList: ', fileList)
   }
 
   renderEditForm() {
