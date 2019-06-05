@@ -2,7 +2,7 @@ import React from 'react'
 import BaseComponent from '@/model/BaseComponent'
 import {
   Form, Input, Button, Select, Row, Col, message, Modal, DatePicker,
-  Icon, Upload,
+  Icon, Upload, Table,
 } from 'antd'
 import ReactQuill from 'react-quill'
 import { TOOLBAR_OPTIONS } from '@/config/constant'
@@ -25,6 +25,7 @@ class C extends BaseComponent {
     this.state = {
       persist: true,
       loading: false,
+      fileList: _.get(props, 'data.attachments') || []
     }
 
     this.user = this.props.user
@@ -32,6 +33,20 @@ class C extends BaseComponent {
 
   ord_loading(f = false) {
     this.setState({ loading: f })
+  }
+
+  normFileList (fileList) {
+    const result = _.map(fileList, file => {
+      console.log('file:', file)
+      const { name, type, size, response } = file
+      return {
+        name,
+        filetype: type,
+        size,
+        url: response,
+      }
+    })
+    return result
   }
 
   handleSubmit = async (e, fields = {}) => {
@@ -50,7 +65,7 @@ class C extends BaseComponent {
         isConflict,
         content,
         published: true,
-        attachments,
+        attachments: this.normFileList(attachments).concat(this.state.fileList),
         ...fields,
       }
       if (!edit) param.proposedBy = fullName
@@ -160,50 +175,19 @@ class C extends BaseComponent {
     // attachment
     const attachment_fn = getFieldDecorator('attachments', {
       valuePropName: 'fileList',
-      getValueFromEvent: this.normFile,
+      getValueFromEvent: e => (Array.isArray(e) ? e : _.get(e, 'fileList')),
       rules: []
     })
     const p_attachment = {
       accept: '.pdf',
-      // defaultFileList: data.attachments,
-      defaultFileList: [
-        {
-          // "name": "file 1.pdf",
-          // "url": "http://localhost:3001/assets/images/logo.svg",
-          // "size": 12000,
-          // "type": "application/pdf"
-          percent: 0,
-          size: 709895,
-          status: "uploading",
-          type: "application/pdf",
-          uid: "rc-uplo-1",
-          "url": "http://localhost:3001/assets/images/logo.svg",
-        },
-        {
-          percent: 0,
-          size: 709895,
-          status: "uploading",
-          type: "application/pdf",
-          uid: "rc-upload-1559705776999-2",
-          "url": "http://localhost:3001/assets/images/logo.svg",
-          // "name": "file 22.pdf",
-          // "url": "http://localhost:3001/assets/images/logo.svg",
-          // "size": 12000,
-          // "type": "application/pdf"
-        }
-      ],
       customRequest: (info) => {
         this.setState({
           attachment_loading: true
         })
         upload_file(info.file).then((d) => {
           console.log('info: ', info)
-          // info.file.status = 'done'
           this.setState({
             attachment_loading: false,
-            // attachment_url: d.url,
-          //   attachment_type: d.type,
-          //   attachment_filename: d.filename,
           })
           info.onSuccess(d.url, d)
         })
@@ -211,22 +195,6 @@ class C extends BaseComponent {
     }
     const attachment_el = (
       <Upload.Dragger name="attachments" {...p_attachment}>
-        {/* {
-          this.state.attachment_url ? (
-            <a target="_blank" href={getSafeUrl(this.state.attachment_url)}>
-              <Icon type="file"/>
-              {' '}
-&nbsp;
-              {this.state.attachment_filename}
-            </a>
-          ) : (
-            <Button loading={this.state.attachment_loading}>
-              <Icon type="upload" />
-              {' '}
-              {I18N.get('from.OrganizerAppForm.click.upload')}
-            </Button>
-          )
-        } */}
         {this.state.attachment_loading ? (
           <div>
             <p className="ant-upload-text" />
@@ -258,22 +226,56 @@ class C extends BaseComponent {
     return result
   }
 
-  normFile = e => {
-    console.log('Upload event:', e)
-    const fileList = Array.isArray(e) ? e : _.get(e, 'fileList')
-    const result = _.map(fileList, file => {
-      console.log('file:', file)
-      const { name, type, size, response, uid } = file
-      return {
-        name,
-        filetype: type || 'application/pdf',
-        size,
-        response,
-        url: response,
-        uid,
-      }
-    })
+  renderFileList () {
+    const dataSource = this.state.fileList
+    const columns = [
+      // {
+      //   title: I18N.get('from.CVoteForm.fileList.number'),
+      //   render: (vid, item, index) => (
+      //   ),
+      // },
+      {
+        title: I18N.get('from.CVoteForm.fileList.files'),
+        dataIndex: 'name',
+        render: (value, item) => (
+          <a href={item.url} className="tableLink">
+            {value}
+          </a>
+        ),
+      },
+      // {
+      //   title: I18N.get('from.CVoteForm.fileList.size'),
+      //   dataIndex: 'size',
+      //   render: (value, item) => value,
+      // },
+      {
+        title: I18N.get('from.CVoteForm.fileList.time'),
+        dataIndex: 'createdAt',
+        render: (value, item) => moment(value).format('MMM D, YYYY'),
+      },
+      {
+        title: I18N.get('from.CVoteForm.fileList.size'),
+        dataIndex: '_id',
+        render: (value, item) => {
+          return <span onClick={this.removeFile.bind(this, item.value)}>{I18N.get('from.CVoteForm.fileList.delete')}</span>
+        },
+      },
+    ]
+
+    const result = (
+      <Table
+        columns={columns}
+        // loading={this.state.loading}
+        dataSource={dataSource}
+        rowKey={record => record._id}
+      />
+    )
     return result
+  }
+
+  removeFile = fileId => {
+    // get fileList
+    // remove from fileList
   }
 
   togglePersist() {
@@ -349,7 +351,7 @@ class C extends BaseComponent {
           {isSecretary && <FormItem label={I18N.get('from.CVoteForm.label.note')} {...formItemLayoutOneLine}>{formProps.notes}</FormItem>}
 
           <FormItem label={I18N.get('from.CVoteForm.label.attachments')} {...formItemLayoutOneLine}>{formProps.attachments}</FormItem>
-
+          {this.renderFileList()}
           <Row gutter={8} type="flex" justify="center">
             {this.renderCancelBtn()}
             {this.renderSaveDraftBtn()}

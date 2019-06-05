@@ -1095,6 +1095,13 @@ const zh = {
   'from.CVoteForm.message.note.update.success': '记录更新成功！',
   'from.CVoteForm.text.onlycouncil': '只有委员会委员才可以创建和编辑提案。',
 
+  'from.CVoteForm.fileList.number': '编号',
+  'from.CVoteForm.fileList.files': '文件',
+  'from.CVoteForm.fileList.size': '大小',
+  'from.CVoteForm.fileList.time': '上传时间',
+  'from.CVoteForm.fileList.actions': '操作',
+  'from.CVoteForm.fileList.delete': '删除',
+
   'from.CVoteForm.button.add': '添加提案',
   'from.CVoteForm.button.cancel': '取消',
   'from.CVoteForm.button.saveDraft': '保存为草案',

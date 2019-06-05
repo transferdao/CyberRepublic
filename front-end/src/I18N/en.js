@@ -1096,6 +1096,13 @@ const en = {
   'from.CVoteForm.message.note.update.success': 'Update notes success!',
   'from.CVoteForm.text.onlycouncil': 'Only Council Member could create or edit proposal.',
 
+  'from.CVoteForm.fileList.number': 'No.',
+  'from.CVoteForm.fileList.files': 'Files',
+  'from.CVoteForm.fileList.size': 'Size',
+  'from.CVoteForm.fileList.time': 'Time',
+  'from.CVoteForm.fileList.actions': 'Actions',
+  'from.CVoteForm.fileList.delete': 'Delete',
+
   'from.CVoteForm.button.add': 'Add a Proposal',
   'from.CVoteForm.button.cancel': 'Cancel',
   'from.CVoteForm.button.saveDraft': 'Save as Draft',
