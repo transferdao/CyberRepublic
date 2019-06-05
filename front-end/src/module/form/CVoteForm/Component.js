@@ -180,16 +180,15 @@ class C extends BaseComponent {
     })
     const p_attachment = {
       accept: '.pdf',
-      customRequest: (info) => {
+      customRequest: ({ file, onSuccess }) => {
         this.setState({
           attachment_loading: true
         })
-        upload_file(info.file).then((d) => {
-          console.log('info: ', info)
+        upload_file(file).then((d) => {
           this.setState({
             attachment_loading: false,
           })
-          info.onSuccess(d.url, d)
+          onSuccess(d.url, d)
         })
       }
     }
