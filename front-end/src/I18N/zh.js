@@ -1095,6 +1095,7 @@ const zh = {
   'from.CVoteForm.message.note.update.success': '记录更新成功！',
   'from.CVoteForm.text.onlycouncil': '只有委员会委员才可以创建和编辑提案。',
 
+  'from.CVoteForm.fileList.attachments': '附件',
   'from.CVoteForm.fileList.number': '编号',
   'from.CVoteForm.fileList.files': '文件',
   'from.CVoteForm.fileList.size': '大小',

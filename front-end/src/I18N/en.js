@@ -1096,6 +1096,7 @@ const en = {
   'from.CVoteForm.message.note.update.success': 'Update notes success!',
   'from.CVoteForm.text.onlycouncil': 'Only Council Member could create or edit proposal.',
 
+  'from.CVoteForm.fileList.attachments': 'Attachments',
   'from.CVoteForm.fileList.number': 'No.',
   'from.CVoteForm.fileList.files': 'Files',
   'from.CVoteForm.fileList.size': 'Size',

@@ -19,7 +19,7 @@ import CRPopover from '@/module/shared/Popover/Component'
 import Translation from '@/module/common/Translation/Container'
 import FileManager from '@/module/common/FileManager/Container'
 
-import { Title, Label } from './style'
+import { Title, Label, TableTitle, TableContainer } from './style'
 import './style.scss'
 
 const { TabPane } = Tabs
@@ -103,6 +103,11 @@ class C extends StandardPage {
     )
   }
 
+  // TODO
+  gotoBid() {
+
+  }
+
   renderDetailSection() {
     const subTitleNode = this.renderSubTitle()
     const contentNode = this.renderContent()
@@ -119,11 +124,11 @@ class C extends StandardPage {
         {contentNode}
         {translationBtn}
         {notesNode}
+        {fileManagerNode}
         {voteActionsNode}
         {adminActionsNode}
         {voteDetailNode}
         {editFormNode}
-        {fileManagerNode}
       </div>
     )
   }
@@ -151,11 +156,14 @@ class C extends StandardPage {
   renderFileManager() {
     const fileList = _.get(this.state, 'data.attachments')
     const result = (
-      <FileManager
-        fileList={fileList}
-        onChange={this.onFileChange}
-        hideUploader={true}
-      />
+      <TableContainer>
+        <TableTitle>{I18N.get('from.CVoteForm.fileList.attachments')}</TableTitle>
+        <FileManager
+          fileList={fileList}
+          onChange={this.onFileChange}
+          hideUploader={true}
+        />
+      </TableContainer>
     )
     return result
   }

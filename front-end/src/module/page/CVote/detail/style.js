@@ -12,3 +12,11 @@ export const Label = styled.span`
 export const Title = styled.h2`
   padding-bottom: 15px;
 `
+
+export const TableContainer = styled.div`
+  margin-top: 40px;
+
+`
+export const TableTitle = styled.h4`
+
+`
