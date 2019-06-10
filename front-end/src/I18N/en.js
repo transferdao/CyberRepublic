@@ -1086,7 +1086,7 @@ const en = {
   'from.CVoteForm.label.title': 'Title',
   'from.CVoteForm.label.type': 'Type',
   'from.CVoteForm.label.content': 'Content',
-  'from.CVoteForm.label.attachments': 'Attachments (<50MB, .pdf)',
+  'from.CVoteForm.label.attachments': 'Attachments (<50MB, PDF only)',
   'from.CVoteForm.label.proposedby': 'Proposed By',
   'from.CVoteForm.label.motion': 'Motion',
   'from.CVoteForm.label.motion.help': 'If this is a motion against existing motion, refer to existing motion #',

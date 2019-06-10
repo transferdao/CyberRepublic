@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux'
 import {routerReducer} from 'react-router-redux'
 
+import bidding from './redux/bidding'
 import task from './redux/task'
 import user from './redux/user'
 import team from './redux/team'
@@ -27,6 +28,7 @@ const appReducer = (state = default_state) => {
 export default combineReducers({
   app: appReducer,
   router: routerReducer,
+  bidding: bidding.getReducer(),
   task: task.getReducer(),
   user: user.getReducer(),
   team: team.getReducer(),

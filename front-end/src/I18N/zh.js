@@ -1085,7 +1085,7 @@ const zh = {
   'from.CVoteForm.label.title': '标题',
   'from.CVoteForm.label.type': '类型',
   'from.CVoteForm.label.content': '内容',
-  'from.CVoteForm.label.attachments': '附件 (<50MB, .pdf)',
+  'from.CVoteForm.label.attachments': '附件 (<50MB, 仅支持PDF)',
   'from.CVoteForm.label.proposedby': '提议者',
   'from.CVoteForm.label.motion': '动议',
   'from.CVoteForm.label.motion.help': '如果这是针对现有的议案作出的提议，请指明现有的议案编号',
