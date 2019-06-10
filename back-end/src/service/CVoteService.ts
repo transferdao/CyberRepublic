@@ -47,8 +47,8 @@ export default class extends Base {
       notes,
       createdBy: this.currentUser._id
     }
-    // 5: RFP
-    if (type === 5 && biddingEndDate) doc.biddingEndDate = biddingEndDate
+    // 5: bidding
+    if (type === constant.CVOTE_TYPE_NUM.bidding && biddingEndDate) doc.biddingEndDate = biddingEndDate
     if (attachments) doc.attachments = attachments
 
     const suggestion = suggestionId && await db_suggestion.findById(suggestionId)
@@ -277,7 +277,7 @@ export default class extends Base {
     const db_cvote = this.getDBModel('CVote')
     const currentUserId = _.get(this.currentUser, '_id')
     const { _id, published, notes, content, isConflict, proposedBy, title, type, biddingEndDate, attachments } = param
-
+    console.log('biddingEndDate, attachments: ', biddingEndDate, attachments)
     if (!this.currentUser || !this.currentUser._id) {
       throw 'cvoteservice.update - invalid current user'
     }
@@ -299,8 +299,8 @@ export default class extends Base {
     if (proposedBy) doc.proposedBy = proposedBy
     if (title) doc.title = title
     if (type) doc.type = type
-    // 5: RFP
-    if (type === 5 && biddingEndDate) doc.biddingEndDate = biddingEndDate
+    // 5: bidding
+    if (type === constant.CVOTE_TYPE_NUM.bidding && biddingEndDate) doc.biddingEndDate = biddingEndDate
     if (attachments) doc.attachments = attachments
 
     if (willChangeToPublish) {

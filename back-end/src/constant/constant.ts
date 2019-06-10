@@ -128,12 +128,20 @@ export const TASK_CANDIDATE_CATEGORY = {
   RSVP: 'RSVP'
 }
 
+export const CVOTE_TYPE_NUM = {
+  newMotioin: 1,
+  motionAgainst: 2,
+  anythingElse: 3,
+  bidding: 4,
+  RFP: 5,
+}
+
 export const CVOTE_TYPE = {
-  1: 'New Motion',
-  2: 'Motion Against',
-  3: 'Anything Else',
-  4: 'Bidding',
-  5: 'RFP',
+  [CVOTE_TYPE_NUM.newMotioin]: 'New Motion',
+  [CVOTE_TYPE_NUM.motionAgainst]: 'Motion Against',
+  [CVOTE_TYPE_NUM.anythingElse]: 'Anything Else',
+  [CVOTE_TYPE_NUM.bidding]: 'Bidding',
+  [CVOTE_TYPE_NUM.RFP]: 'RFP',
 }
 
 // ACTIVE === PASSED, currently 'published' flag is used for 'DRAFT'

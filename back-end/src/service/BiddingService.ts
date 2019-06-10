@@ -10,32 +10,13 @@ export default class extends Base {
 
   // attend bidding
   public async bid(param: any): Promise<Document> {
-    const db_cvote = this.getDBModel('CVote')
-    const userId = _.get(this.currentUser, '_id')
-    const { _id, file } = param
-
-    const cur = await db_cvote.findOne({ _id })
-    if (!cur) {
-      throw 'invalid proposal id'
-    }
-    const isFileExisted = await db_cvote.findOne({ _id, 'bidding.files.user': userId })
+    const { id: _id } = param
+        const isFileExisted = await this.model.findById(_id)
 
     if (isFileExisted) {
-      await db_cvote.update({ _id, 'bidding.files.user': userId }, {
-        $set: {
-          // 'bidding.files.$.user': userId,
-          'bidding.files.$.file': file,
-        },
-      })
+      await this.update(param)
     } else {
-      await db_cvote.update({ _id }, {
-        $push: {
-          'bidding.files': {
-            user: userId,
-            file,
-          }
-        }
-      })
+      await this.create(param)
     }
 
     return await this.show(_id)
@@ -43,10 +24,16 @@ export default class extends Base {
 
   public async create(param: any): Promise<Document> {
     // get param
-    const { files, proposal } = param
+    const { files, proposalId } = param
+    const db_cvote = this.getDBModel('CVote')
+    const proposal = await db_cvote.findById(proposalId)
+    if (!proposal) {
+      throw 'invalid proposal id'
+    }
+
     const doc: any = {
       files,
-      proposal,
+      proposal: proposalId,
       createdBy: _.get(this.currentUser, '_id'),
     }
 
@@ -60,10 +47,15 @@ export default class extends Base {
     // get param
     const { id, files, proposalId } = param
     const db_cvote = this.getDBModel('CVote')
-    const proposal = db_cvote.findById(proposalId)
-    if (!proposal) throw 'proposal not existed'
+    const proposal = await db_cvote.findById(proposalId)
+    if (!proposal) {
+      throw 'invalid proposal id'
+    }
+
     // check if bidding id ended
-    if (!proposal.biddingStatus === constant.BIDDING_STATUS.CLOSED) return
+    const isEnded = proposal.biddingStatus === constant.BIDDING_STATUS.CLOSED || Date.now() > proposal.biddingEndDate
+
+    if (isEnded) return
 
     // build document object
     const doc: any = {
@@ -81,7 +73,8 @@ export default class extends Base {
     const proposal = db_cvote.findById(proposalId)
     if (!proposal) throw 'proposal not existed'
     // check if bidding id ended
-    if (!proposal.biddingStatus === constant.BIDDING_STATUS.CLOSED) return
+    const isEnded = proposal.biddingStatus === constant.BIDDING_STATUS.CLOSED || Date.now() > proposal.biddingEndDate
+    if (!isEnded) return
     const query: any = {
       proposal: proposalId,
     }
@@ -113,7 +106,7 @@ export default class extends Base {
     }
   }
 
-  public async show(param: any): Promise<Document> {
+  private async show(param: any): Promise<Document> {
     const { id: _id } = param
     const db_cvote = this.getDBModel('CVote')
     const proposal = db_cvote.findById(_id)
