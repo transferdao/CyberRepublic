@@ -1005,6 +1005,9 @@ const en = {
   'role.admin.mode': 'Admin Mode',
 
   // Profile
+  'profile.did': 'Associate DID',
+  'profile.qrcode.hint': 'Open ELA wallet and scan',
+  'profile.did.reassociate': 'Re-associate DID',
   'profile.thanksForCompleting': 'Thanks for updating your profile!',
   'profile.skillsets': 'My Skillsets',
   'profile.completeProfile': 'Complete your Profile',
