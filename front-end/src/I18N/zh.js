@@ -118,7 +118,7 @@ const zh = {
   'image.upload.type.error': '上传的文件不是图片',
   'image.upload.size.error': '上传的文件大小不能超过500KB',
 
-  'comments': '评论',
+  comments: '评论',
   'comments.posts': '动态',
   'comments.post': '发言',
   'comments.noComments': '还没有评论，',
@@ -975,6 +975,9 @@ const zh = {
   'role.admin.mode': '管理员模式',
 
   // Profile
+  'profile.did': '绑定 DID',
+  'profile.qrcode.hint': '用 ELA钱包 扫码',
+  'profile.did.reassociate': '重新绑定 DID',
   'profile.thanksForCompleting': '感谢更新您的个人档案！',
   'profile.skillsets': '我的技能',
   'profile.completeProfile': '请完成您的个人档案',

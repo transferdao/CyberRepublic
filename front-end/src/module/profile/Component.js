@@ -1,10 +1,13 @@
 import React from 'react'
 import _ from 'lodash'
+import { Col, Row, Icon, Spin, Modal, Upload, Popover } from 'antd'
+import moment from 'moment-timezone'
+import MediaQuery from 'react-responsive'
+import linkifyStr from 'linkifyjs/string'
+import QRCODE from 'qrcode.react'
 import BaseComponent from '@/model/BaseComponent'
 import UserEditForm from '@/module/form/UserEditForm/Container'
 import I18N from '@/I18N'
-import { Col, Row, Icon, Spin, Modal, Upload } from 'antd'
-import moment from 'moment-timezone'
 import { upload_file } from '@/util'
 import { getSafeUrl } from '@/util/url'
 import {
@@ -13,11 +16,8 @@ import {
   USER_ROLE_TO_TEXT
 } from '@/constant'
 import config from '@/config'
-import MediaQuery from 'react-responsive'
-import linkifyStr from 'linkifyjs/string'
 import sanitizeHtml from '@/util/html'
 import GenderSvg from './GenderSvg'
-
 import './style.scss'
 
 /**
@@ -70,6 +70,7 @@ export default class extends BaseComponent {
         <div className="profile-info-container profile-info-container-mobile clearfix">
           {this.renderAvatar(true)}
           {this.renderFullName(true)}
+          {this.renderDid(true)}
           {this.renderRole(true)}
           {this.renderLocation(true)}
           {this.renderLocalTime(true)}
@@ -134,6 +135,7 @@ export default class extends BaseComponent {
           <div className="profile-left pull-left">{this.renderAvatar()}</div>
           <div className="profile-right pull-left">
             {this.renderFullName()}
+            {this.renderDid()}
             <Row>
               <Col span={24} className="profile-right-col">
                 {this.renderRole()}
@@ -299,6 +301,48 @@ export default class extends BaseComponent {
     )
   }
 
+  renderDid(isMobile) {
+    const qrcodeContent = (
+      <div className="profile-qrcode">
+        <div className="profile-general-qrcode">
+          <QRCODE value="https://www.baidu.com" size={150}/>
+        </div>
+        <div className="profile-general-qrcode-hint">{I18N.get('profile.qrcode.hint')}</div>
+      </div>
+    )
+
+    const icon = () => (
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.6667 10.6667H1.33333V1.33333H6V0H0V1.33333V12H1.33333H12V10.6667V6H10.6667V10.6667ZM7.33333 0V1.33333H9.72667L3.17333 7.88667L4.11333 8.82667L10.6667 2.27333V4.66667H12V0H7.33333Z" fill="#008D85"/>
+      </svg>
+    )
+    // 是否已经绑定 did  this.props....
+    const didExist = false
+
+    return (
+      didExist ?
+        (
+          <div className="profile-did-area">
+            DID:
+            <div className="profile-did-no">
+              1010100101010010101
+              <Icon component={icon} style={{marginLeft: '4px'}}/>
+            </div>
+            <div className="profile-did-re">{I18N.get('profile.did.reassociate')}</div>
+          </div>
+        )
+        :
+        (
+          <Popover content={qrcodeContent} trigger="click">
+            <div className={`profile-general-did ${isMobile ? '' : ''}`} >
+              {I18N.get(
+                'profile.did'
+              )}
+            </div>
+          </Popover>
+        ))
+  }
+
   renderLocation(isMobile) {
     return (
       <div
@@ -329,7 +373,11 @@ export default class extends BaseComponent {
     return (
       <div className="skillset-container">
         {_.map(this.props.user.profile.skillset || [], skillset => (
-          <div key={skillset}>+ {I18N.get(`user.skillset.${skillset}`)}</div>
+          <div key={skillset}>
++
+            {' '}
+            {I18N.get(`user.skillset.${skillset}`)}
+          </div>
         ))}
       </div>
     )
@@ -352,8 +400,13 @@ export default class extends BaseComponent {
               target="_blank"
               className="link-container"
             >
-              <Icon type="link" />{' '}
-              <span> {I18N.get('profile.portfolio')} </span>
+              <Icon type="link" />
+              {' '}
+              <span>
+                {' '}
+                {I18N.get('profile.portfolio')}
+                {' '}
+              </span>
             </a>
           </div>
         )}
@@ -373,7 +426,7 @@ export default class extends BaseComponent {
 
   renderLocalTime(isMobile) {
     const now = moment(Date.now())
-    const user = this.props.user
+    const {user} = this.props
     const localTime = user.profile.timezone
       ? now.tz(user.profile.timezone).format('LT z')
       : 'Unknown'
@@ -386,7 +439,9 @@ export default class extends BaseComponent {
       >
         <Icon type="clock-circle" />
         <span>
-          {I18N.get('profile.localTime')} {localTime}
+          {I18N.get('profile.localTime')}
+          {' '}
+          {localTime}
         </span>
       </div>
     )
