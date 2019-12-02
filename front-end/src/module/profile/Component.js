@@ -33,7 +33,8 @@ export default class extends BaseComponent {
     super(props)
 
     this.state = {
-      editing: false
+      editing: false,
+      visible: false
     }
   }
 
@@ -301,6 +302,18 @@ export default class extends BaseComponent {
     )
   }
 
+  closePopover() {
+    this.setState({
+      visible: false
+    })
+  }
+
+  handleVisibleChange(visible) {
+    this.setState({
+      visible
+    })
+  }
+
   renderDid(isMobile) {
     const qrcodeContent = (
       <div className="profile-qrcode">
@@ -308,6 +321,7 @@ export default class extends BaseComponent {
           <QRCODE value="https://www.baidu.com" size={150}/>
         </div>
         <div className="profile-general-qrcode-hint">{I18N.get('profile.qrcode.hint')}</div>
+        <div className="profile-qrcode-close" onClick={this.closePopover.bind(this)}>X</div>
       </div>
     )
 
@@ -333,7 +347,7 @@ export default class extends BaseComponent {
         )
         :
         (
-          <Popover content={qrcodeContent} trigger="click">
+          <Popover content={qrcodeContent} trigger="click" visible={this.state.visible} onVisibleChange={this.handleVisibleChange.bind(this)}>
             <div className={`profile-general-did ${isMobile ? '' : ''}`} >
               {I18N.get(
                 'profile.did'
