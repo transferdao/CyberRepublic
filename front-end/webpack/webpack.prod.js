@@ -41,17 +41,11 @@ const devEnv = {
   CR_VERSION: JSON.stringify(process.env.CR_VERSION)
 };
 
-const cssFilename_lib = "static/css/lib.css?[hash:8]";
+
 const cssFilename_app = "static/css/app.css?[hash:8]";
-const cssFilename_mobile = "static/css/mobile.css?[hash:8]";
-const extractCSS_LIB = new MiniCssExtractPlugin({
-  filename: cssFilename_lib
-});
+
 const extractCSS_APP = new MiniCssExtractPlugin({
   filename: cssFilename_app
-});
-const extractCSS_MOBILE = new MiniCssExtractPlugin({
-  filename: cssFilename_mobile
 });
 
 module.exports = merge(common, {
@@ -240,9 +234,7 @@ module.exports = merge(common, {
       },
       chunksSortMode: "none"
     }),
-    extractCSS_LIB,
     extractCSS_APP,
-    extractCSS_MOBILE,
     new webpack.DefinePlugin({
       "process.env":
         process.env.NODE_ENV === "production"
