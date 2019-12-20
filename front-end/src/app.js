@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { Route, Switch } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { ConnectedRouter } from 'react-router-redux'
+import { Spin } from 'antd'
 import store from '@/store'
 import config from '@/config'
 import { api_request, permissions } from './util'
@@ -44,7 +45,7 @@ const App = () => (
         <script defer={true} src="/assets/js/elastos.js" />
       )}
     </Helmet>
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex-center"><Spin size="large"/></div>}>
       <Switch id="ebp-main">
         {_.map(config.router, (item, i) => {
           const props = _.omit(item, ['page', 'path', 'type'])
