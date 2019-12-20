@@ -3,6 +3,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const util = require('./util');
+const os = require('os');
 const resolve = util.resolve;
 
 module.exports = {
@@ -11,7 +12,7 @@ module.exports = {
         minimizer: [
             new UglifyJsPlugin({
                 cache: true,
-                parallel: true,
+                parallel: os.cpus().length,
                 sourceMap: true, // set true is you want JS source map
                 uglifyOptions: {
                     ecma: 6,

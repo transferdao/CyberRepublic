@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Helmet } from 'react-helmet'
 import _ from 'lodash'
@@ -44,21 +44,23 @@ const App = () => (
         <script defer={true} src="/assets/js/elastos.js" />
       )}
     </Helmet>
-    <Switch id="ebp-main">
-      {_.map(config.router, (item, i) => {
-        const props = _.omit(item, ['page', 'path', 'type'])
-        const R = item.type || Route
-        return (
-          <R
-            path={item.path}
-            key={i}
-            exact={true}
-            component={item.page}
-            {...props}
-          />
-        )
-      })}
-    </Switch>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Switch id="ebp-main">
+        {_.map(config.router, (item, i) => {
+          const props = _.omit(item, ['page', 'path', 'type'])
+          const R = item.type || Route
+          return (
+            <R
+              path={item.path}
+              key={i}
+              exact={true}
+              component={item.page}
+              {...props}
+            />
+          )
+        })}
+      </Switch>
+    </Suspense>
   </div>
 )
 

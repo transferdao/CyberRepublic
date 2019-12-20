@@ -96,6 +96,7 @@ module.exports = merge(common, {
                 minifyJS: false,
                 minifyCSS: false,
             },
+            chunksSortMode: 'none'
         }),
         new webpack.DefinePlugin({
             'process.env': {

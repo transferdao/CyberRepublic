@@ -241,6 +241,7 @@ module.exports = merge(common, {
                 minifySCSS: true,
                 minifyURLs: true,
             },
+            chunksSortMode: 'none'
         }),
         extractCSS_LIB,
         extractCSS_APP,
